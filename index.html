@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الهيكل التنظيمي للمنطقة الحرة بالسويس</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the organization chart - New Design */
+        body {
+            font-family: 'Inter', sans-serif;
+            direction: rtl; /* Right-to-left for Arabic text */
+            text-align: right;
+            background-color: #f8fafc; /* Lighter background */
+        }
+        .org-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 20px; /* More rounded corners */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Stronger, softer shadow */
+            margin: 30px auto;
+            max-width: 1400px; /* Wider container */
+            width: 95%;
+        }
+        .node {
+            background-color: #e0f7fa; /* Light cyan for general nodes */
+            border: 1px solid #b2ebf2; /* Border */
+            border-radius: 12px; /* Rounded corners */
+            padding: 12px 20px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #006064; /* Dark teal text */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease-in-out; /* Smooth transition */
+            position: relative;
+            z-index: 1; /* Ensure nodes are above lines */
+        }
+        .node:hover {
+            transform: translateY(-5px) scale(1.02); /* Lift and slight scale effect */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Specific level styling */
+        .level-1 {
+            background-color: #00796b; /* Dark teal for top level */
+            color: #ffffff;
+            font-size: 1.8rem;
+            padding: 20px 35px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            width: fit-content;
+        }
+        .level-2 {
+            background-color: #009688; /* Medium teal */
+            color: #ffffff;
+            font-size: 1.4rem;
+            padding: 15px 25px;
+            margin-top: 20px;
+            border-radius: 12px;
+            width: fit-content;
+        }
+        .level-3 {
+            background-color: #4db6ac; /* Lighter teal */
+            color: #ffffff;
+            font-size: 1.2rem;
+            padding: 12px 22px;
+            border-radius: 10px;
+            width: fit-content;
+        }
+        .person {
+            background-color: #e0f2f7; /* Very light cyan for individuals */
+            color: #263238; /* Darker text for readability */
+            font-size: 1rem;
+            padding: 10px 15px;
+            margin: 6px 0;
+            border-radius: 8px;
+            width: fit-content;
+            text-align: center;
+            font-weight: bold; /* All names are bold */
+        }
+        /* Style for Management Directors */
+        .director-person {
+            font-weight: bold;
+            color: #b71c1c; /* A distinct dark red color */
+            font-size: 1.05rem; /* Slightly larger font */
+            background-color: #ffebee; /* Very light red background */
+            border: 1px solid #ef9a9a; /* Light red border */
+        }
+        /* Style for General Managers */
+        .general-manager-person {
+            font-weight: bold;
+            color: #4a148c; /* Dark purple color */
+            font-size: 1.1rem; /* Slightly larger font */
+            background-color: #ede7f6; /* Very light purple background */
+            border: 1px solid #ce93d8; /* Light purple border */
+        }
+        /* Style for Retired persons */
+        .retired-person {
+            font-weight: bold;
+            color: #c27800; /* Darker orange/yellow color */
+            font-style: italic; /* Italic font */
+            font-size: 0.95rem; /* Slightly smaller font */
+            background-color: #fffde7; /* Very light yellow background */
+            border: 1px solid #ffecb3; /* Light yellow border */
+            text-decoration: none; /* Remove strikethrough */
+        }
+        /* Style for the "باحث" prefix */
+        .researcher-prefix {
+            color: #00796b; /* Dark teal color for "باحث" */
+            font-weight: bold; /* Ensure it remains bold */
+        }
+        .sub-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            background-color: #f0fdfa; /* Even lighter background for sub-groups */
+            width: 95%; /* Adjust width for nested groups */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Inner shadow */
+        }
+        .area-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* More space between area boxes */
+            margin-top: 20px;
+            width: 100%;
+        }
+        .area-box {
+            background-color: #ffffff; /* White background for area boxes */
+            border: 2px solid #80cbc4; /* Teal border */
+            border-radius: 15px;
+            padding: 20px;
+            flex: 1 1 calc(30% - 40px); /* Approx 3 items per row on large screens */
+            min-width: 300px; /* Minimum width for each area box */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+        .area-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        }
+        .area-box h4 {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #004d40; /* Darker teal for area titles */
+            font-size: 1.2rem;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #80cbc4; /* Underline effect */
+            width: 80%;
+        }
+        .line {
+            width: 3px; /* Thicker lines */
+            background-color: #00796b; /* Matching main color */
+            height: 30px; /* Vertical line length */
+            margin: 0 auto;
+        }
+        .horizontal-line {
+            height: 3px;
+            background-color: #00796b;
+            width: 90%; /* Wider horizontal line */
+            margin: 20px auto;
+        }
+
+        /* Connector lines for general administrations */
+        .general-admin-branches {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px; /* Space between main administration blocks */
+            margin-top: 30px;
+            width: 100%;
+            position: relative;
+        }
+        .general-admin-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 calc(33% - 40px); /* 3 columns layout */
+            min-width: 350px; /* Minimum width for each block */
+            max-width: 450px; /* Max width for each block */
+            margin-bottom: 30px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .general-admin-block {
+                flex: 1 1 calc(48% - 40px); /* 2 columns on medium screens */
+            }
+        }
+        @media (max-width: 768px) {
+            .org-chart-container {
+                padding: 15px;
+                margin: 15px auto;
+                width: 98%;
+            }
+            .node {
+                padding: 10px 15px;
+                font-size: 0.95rem;
+            }
+            .level-1 {
+                font-size: 1.5rem;
+                padding: 15px 25px;
+            }
+            .level-2 {
+                font-size: 1.2rem;
+                padding: 12px 20px;
+            }
+            .level-3 {
+                font-size: 1.1rem;
+                padding: 10px 18px;
+            }
+            .person {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+            .area-box {
+                flex: 1 1 95%; /* Single item per row on small screens */
+                min-width: unset;
+            }
+            .general-admin-block {
+                flex: 1 1 95%; /* Single column on small screens */
+                min-width: unset;
+                max-width: unset;
+            }
+            .general-admin-branches {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="org-chart-container">
+        <div class="node level-1">الهيكل التنظيمي للمنطقة الحرة بالسويس</div>
+
+        <div class="line"></div>
+
+        <div class="node level-2"> مكتب رئيس المنطقة</div>
+        <div class="sub-group">
+            <div class="person">عبد الله نظمي</div>
+            <div class="person">محمد عزب</div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="node level-2"> إدارة النظم التتبعية المباشرة لرئيس الإدارة المركزية للمنطقة</div>
+        <div class="sub-group">
+            <div class="person">عمرو حواله</div>
+            <div class="person">مي نصر</div>
+            <div class="person">عبد الرحمن</div>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="node level-1"> الإدارات العامة بالمنطقة الحرة بالسويس</div>
+        <div class="horizontal-line"></div>
+
+        <div class="general-admin-branches">
+            <div class="general-admin-block">
+                <div class="node level-3">أ. هيكل إدارة التنفيذ</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: ------ </div>
+                    <div class="area-group">
+                        <div class="area-box">
+                            <h4>منطقة الأديبة</h4>
+                            <div class="person director-person">مدير إدارة: رضا فؤاد</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> محمد علي محمد</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> محمد ياقوت</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>منطقة عتاقة</h4>
+                            <div class="person director-person">مدير إدارة: محمد احمد</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> عوض الله</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> محمد بيومي</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>منطقة خاصة</h4>
+                            <div class="person director-person">مدير إدارة: وليد المرجاوي</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> حازم</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>منطقة بورتوفيق</h4>
+                            <div class="person director-person">مدير إدارة: سعيد فرج</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> هيثم صالح</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> سيد محمد</div>
+                        </div>
+                    </div>
+                    <div class="person mt-4 retired-person">خالد بدوي (معاش)</div>
+                </div>
+            </div>
+
+            <div class="general-admin-block">
+                <div class="node level-3">هيكل إدارة المتابعة المالية</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: عبد الناصر احمد</div>
+                    <div class="area-group">
+                        <div class="area-box">
+                            <h4>منطقة الأديبة - عتاقة - خاصة</h4>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> احمد صلاح</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> طارق حلمي</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> مصطفى ابو السعود </div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> محمد المحتت</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>منطقة بورتوفيق</h4>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> ابراهيم عمر</div>
+                        </div>
+                    </div>
+                    <div class="person mt-4 retired-person">هويدا إسماعيل (معاش)</div>
+                </div>
+            </div>
+
+            <div class="general-admin-block">
+                <div class="node level-3"> هيكل إدارة البحوث والتراخيص</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: احمد صلاح</div>
+                    <div class="area-group">
+                        <div class="area-box">
+                            <h4>منطقة الأديبة - عتاقة - خاصة - بورتوفيق</h4>
+                            <div class="person director-person">مدير إدارة: هادر خلف</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> شيماء</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> احمد صلاح زكي</div>
+                            <div class="person"><span class="researcher-prefix">باحث:</span> محمد الفحام</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="general-admin-block">
+                <div class="node level-3"> هيكل إدارة الشئون القانونية</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: اسلام دويدار</div>
+                    <div class="person">إداري: وائل عطية</div>
+                    <div class="person">محامي: اشرف</div>
+                    <div class="person">خالد كامل (مجمع)</div>
+                </div>
+            </div>
+
+            <div class="general-admin-block">
+                <div class="node level-3"> هيكل إدارة الشئون الإدارية</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: محمد علي</div>
+                    <div class="person">التسوية البنكية: <span class="researcher-prefix">باحث:</span> حنان عطية</div>
+                    <div class="person">حضور وانصراف: <span class="researcher-prefix">باحث:</span> سمر</div>
+                    <div class="person">خزنه: محمود حسين</div>
+                    <div class="person">أرشيف + مخزن: امين</div>
+                    <div class="area-group">
+                        <div class="area-box">
+                            <h4>سائقين</h4>
+                            <div class="person">محمد إسماعيل</div>
+                            <div class="person">رجب عبد الغني</div>
+                            <div class="person">مصطفى إسماعيل</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>عمال</h4>
+                            <div class="person">ناصر مهدي</div>
+                            <div class="person">فرج الطاهر</div>
+                            <div class="person">حسنى عبد العاطي</div>
+                            <div class="person">إسماعيل</div>
+                        </div>
+                    </div>
+                    <div class="person mt-4 retired-person">محمد رمضان (معاش)</div>
+                </div>
+            </div>
+
+            <div class="general-admin-block">
+                <div class="node level-3">هيكل إدارة الشئون الهندسية</div>
+                <div class="sub-group w-full">
+                    <div class="person general-manager-person">المدير العام: محمد جمعه</div>
+                    <div class="person">إداري: عبد الله محجوب</div>
+                    <div class="person">مهندسه: مي حسن</div>
+                    <div class="area-group">
+                        <div class="area-box">
+                            <h4>فني كهرباء</h4>
+                            <div class="person">منصور</div>
+                            <div class="person">رجب</div>
+                            <div class="person">علاء</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>فني سباكة</h4>
+                            <div class="person">سيد بدوي</div>
+                            <div class="person">محمد جمعه</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>فني طلمبات</h4>
+                            <div class="person">هاني مكي</div>
+                            <div class="person">محمد عبد الرازق</div>
+                            <div class="person">عبد الرحيم</div>
+                            <div class="person">حسن فتحي</div>
+                        </div>
+                        <div class="area-box">
+                            <h4>منطقة بورتوفيق (موظفون تابعون للشئون الهندسية)</h4>
+                            <div class="person">جاد الكريم</div>
+                            <div class="person">هشام فوزي</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
