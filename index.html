@@ -70,7 +70,21 @@
             padding: 12px 22px;
             border-radius: 10px;
             width: fit-content;
+            margin-bottom: 15px; /* NEW: Space for connector line */
         }
+        /* NEW: Connector line from level-3 node to its sub-group */
+        .general-admin-block > .node.level-3::after {
+            content: '';
+            position: absolute;
+            bottom: -15px; /* Connects from node bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px; /* Match existing .line */
+            height: 15px; /* Length of the connector */
+            background-color: #00796b; /* Match existing .line */
+            z-index: 0;
+        }
+
         .person {
             background-color: #e0f2f7; /* Very light cyan for individuals */
             color: #263238; /* Darker text for readability */
@@ -81,7 +95,15 @@
             width: fit-content;
             text-align: center;
             font-weight: bold; /* All names are bold */
+            transition: all 0.2s ease-out; /* NEW: Transition for hover */
         }
+        /* NEW: Hover effect for person */
+        .person:hover {
+            background-color: #ccecf2; /* Slightly darker cyan */
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
         /* Style for Management Directors */
         .director-person {
             font-weight: bold;
@@ -89,6 +111,8 @@
             font-size: 1.05rem; /* Slightly larger font */
             background-color: #ffebee; /* Very light red background */
             border: 1px solid #ef9a9a; /* Light red border */
+            border-left: 4px solid #8c1616; /* NEW: Emphasizing border */
+            padding-left: 18px; /* NEW: Adjust padding for border */
         }
         /* Style for General Managers */
         .general-manager-person {
@@ -97,6 +121,8 @@
             font-size: 1.1rem; /* Slightly larger font */
             background-color: #ede7f6; /* Very light purple background */
             border: 1px solid #ce93d8; /* Light purple border */
+            border-left: 4px solid #380f6b; /* NEW: Emphasizing border */
+            padding-left: 18px; /* NEW: Adjust padding for border */
         }
         /* Style for Retired persons */
         .retired-person {
@@ -270,7 +296,8 @@
             <div class="general-admin-block">
                 <div class="node level-3">أ. هيكل إدارة التنفيذ</div>
                 <div class="sub-group w-full">
-                    <div class="person general-manager-person">المدير العام: ------ </div>
+                    <!-- NEW: Note for placeholder -->
+                    <div class="person general-manager-person">المدير العام: (يرجى ملء الاسم أو وضع "شاغر") </div>
                     <div class="area-group">
                         <div class="area-box">
                             <h4>منطقة الأديبة</h4>
